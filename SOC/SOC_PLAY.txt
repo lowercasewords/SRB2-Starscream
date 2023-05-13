@@ -1,0 +1,9 @@
+Character
+SkinName = starscream
+DisplayName = Starscream
+PlayerText = ^3Starscream^0 joins the fight!
+
+^2Ability:^0 Superiority complex on!
+
+^2Tip:^0in development!
+#
