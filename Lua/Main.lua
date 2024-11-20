@@ -1,9 +1,9 @@
-//A cooldown of tranformation.
+-- A cooldown of tranformation.
 local TF_TIMER_MAX = 20*TICRATE
 local FUEL_CAP = 500*TICRATE
 local MISSILE_TIMER_MAX = 50*TICRATE
 
-//Counts down to zezo
+-- Counts down to zezo
 local tf_countdown = TF_TIMER_MAX
 local fuel_countdown = FUEL_CAP
 local missile_countdown = 0*TICRATE
@@ -13,8 +13,8 @@ local allow_tf_botjet = true
 local land_sound_list = {2, sfx_sland1, sfx_sland2, sfx_sland3}
 local jump_sound_list = {2, sfx_sjump1, sfx_sjump2, sfx_sjump3}
 
-//Returns a sound and moves to another.
-//Requeres first member of a table to be an index
+-- Returns a sound and moves to another.
+-- Requeres first member of a table to be an index
 local function GetFollowSound(sound_list)
 		if(sound_list[1] >= #sound_list) then
 			sound_list[1] = 2
@@ -25,7 +25,7 @@ local function GetFollowSound(sound_list)
 		
 end
 
-//Death of the missile
+-- Death of the missile
 addHook("MobjMoveBlocked",
 		function(mo)	
 		
@@ -73,21 +73,21 @@ addHook("PlayerThink",
 				return
 			end
 			
-			//If player is a jet
+			-- If player is a jet
 			if(player.mo.state == S_JET_MODE) then
-				fuel_countdown = $-1*TICRATE //decrease fuel in jet mode
+				fuel_countdown = $-1*TICRATE -- decrease fuel in jet mode
 				
 				if(fuel_countdown <= 0*TICRATE) then
-					player.mo.state = S_JETBOT //force to bot
-					fuel_countdown = FUEL_CAP //reset fuel to max
+					player.mo.state = S_JETBOT -- force to bot
+					fuel_countdown = FUEL_CAP -- reset fuel to max
 				end
-			//If player is a bot
+			-- If player is a bot
 			elseif(player.mo.state == S_BOTJET) then 
-				fuel_countdown = FUEL_CAP 		//reset to max fuel
-				allow_tf_botjet = false			//not allow to tf into jet
+				fuel_countdown = FUEL_CAP 		-- reset to max fuel
+				allow_tf_botjet = false			-- not allow to tf into jet
 			end
 			
-			//End long sounds if they are not irrelevant anymore
+			-- End long sounds if they are not irrelevant anymore
 			if(S_SoundPlaying(player.mo, sfx_swalk) and
 			player.mo.state ~= S_PLAY_WALK) then
 				S_StopSoundByID(player.m, sfx_swalk)
@@ -97,7 +97,7 @@ addHook("PlayerThink",
 			end
 			
 			
-			//Start specific sounds
+			-- Start specific sounds
 			if(player.mo.eflags & MFE_JUSTHITFLOOR) then
 				local sound = GetFollowSound(land_sound_list)
 				if(not S_SoundPlaying(player.mo, sound)) then
@@ -120,20 +120,20 @@ addHook("PlayerThink",
 			
 			end
 			
-			//Don't allow botjet tranformation if
-			if(not allow_tf_botjet and 					//transformation is already not allowed
-			player.mo.eflags & MFE_JUSTHITFLOOR) then	//object is falling
+			-- Don't allow botjet tranformation if
+			if(not allow_tf_botjet and 					-- transformation is already not allowed
+			player.mo.eflags & MFE_JUSTHITFLOOR) then	-- object is falling
 				allow_tf_botjet = true
 			end
 			
-			//Transform into bot if ..
+			-- Transform into bot if ..
 			if(player.mo.state == S_JET_MODE and 
-			(player.mo.eflags & MFE_JUSTHITFLOOR or  //jet hit the floor
-			player.mo.eflags & MFE_UNDERWATER)) then //jet submerged under water
+			(player.mo.eflags & MFE_JUSTHITFLOOR or  -- jet hit the floor
+			player.mo.eflags & MFE_UNDERWATER)) then -- jet submerged under water
 				player.mo.state = S_JETBOT
 			end
 			
-			//Transform into bot if being forced from the jet mode (jet state)
+			-- Transform into bot if being forced from the jet mode (jet state)
 			if(player.mo.prevstate ~= nil and
 			player.mo.prevstate == S_JET_MODE and
 			player.mo.state ~= S_JET_MODE and
@@ -141,20 +141,20 @@ addHook("PlayerThink",
 				player.mo.state = S_JETBOT
 			end
 			
-			//Countdowns the transformation cooldown
+			-- Countdowns the transformation cooldown
 			if(tf_countdown > 0*TICRATE) then
 				tf_countdown = $-1*TICRATE
 			end
-			//Countdown the rocket launch cooldown
+			-- Countdown the rocket launch cooldown
 			if(missile_countdown > 0*TICRATE) then
 				missile_countdown = $-1*TICRATE
 			end
 			
-			//Updates previous state
+			-- Updates previous state
 			player.mo.prevstate = player.mo.state
 		end)
 		
-//Executes each time the player is blocked by solid objects (not entities)
+-- Executes each time the player is blocked by solid objects (not entities)
 addHook("MobjMoveBlocked", 
 		function(player_mo, collider)
 			if(not player_mo or 
@@ -167,12 +167,12 @@ addHook("MobjMoveBlocked",
 		end,
 		MT_PLAYER)
 
-//Spin is pressed 
+-- Spin is pressed 
 addHook("SpinSpecial", 
 		function(player)
 			if(player == nil or
 			player.mo == nil or
-			player.mo.skin ~= "starscream")
+			player.mo.skin ~= "starscream") then
 				return
 			end
 			
@@ -183,24 +183,24 @@ addHook("SpinSpecial",
 		end,
 		MT_PLAYER)
 			
-//Executes when pressing jump button in the air
+-- Executes when pressing jump button in the air
 addHook("AbilitySpecial",
 		function(player)
-			//Decide if transformation can 
-			//happen on players command
+			-- Decide if transformation can 
+			-- happen on players command
 			if(tf_countdown <= 0 and
 			   (player.mo.state == S_JET_MODE or
 			   player.mo.state == S_PLAY_JUMP or
 			   player.mo.state == S_PLAY_FALL)) then
 				
-			    //Transforming into jet when
-				if(allow_tf_botjet and					//is allowed to
-				not (player.mo.eflags & MFE_UNDERWATER) and	//not underwater
-				player.mo.state != S_JET_MODE) then		//not already a jet
+			    -- Transforming into jet when
+				if(allow_tf_botjet and					-- is allowed to
+				not (player.mo.eflags & MFE_UNDERWATER) and	-- not underwater
+				player.mo.state != S_JET_MODE) then		-- not already a jet
 					player.mo.state = S_BOTJET
 					tf_countdown = TF_TIMER_MAX
-				//Transforming into bot
-				elseif(player.mo.state == S_JET_MODE) then	//when a jet
+				-- Transforming into bot
+				elseif(player.mo.state == S_JET_MODE) then	-- when a jet
 					player.mo.state = S_JETBOT
 					tf_countdown = TF_TIMER_MAX
 				end
