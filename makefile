@@ -4,7 +4,7 @@ DIRS = Lua Sprites Skins Sounds Soc
 PRIORITY_FILES = Skins/S_SKIN Lua/Def.lua
 
 SKIN = skin starscream
-MAP = map04
+MAP = map01
 CHEATS = "godmode 1" + "devmode 1"
 
 all: clean build launch

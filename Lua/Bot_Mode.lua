@@ -8,6 +8,11 @@ addHook("PlayerThink",
 				return
 			end
 			
+			if(player.mo.eflags & MFE_JUSTHITFLOOR) then
+				-- if(not S_SoundPlaying(player.mo, sfx_sland1)) then
+					S_StartSound(player.mo, sfx_sland1, player)
+				-- endmk
+			end
 			
 -- 			if(missile_countdown > 0*TICRATE) then
 -- 				missile_countdown = $-1*TICRATE
@@ -32,7 +37,7 @@ addHook("SpinSpecial",
 -- 			if(missile.info.deathstate == 0) then
 -- 				missile = nil
 -- 			end
-						/*P_SpawnPointMissile(player.mo,
+						--[[P_SpawnPointMissile(player.mo,
 												player.mo.x+100,
 												player.mo.y+100,
 												player.mo.z+100,
@@ -40,8 +45,8 @@ addHook("SpinSpecial",
 												player.mo.x,
 												player.mo.y,
 												player.mo.z)
-												*/
-			/*
+												]]--
+			--[[
 			local maxdist = 10//FixedMul(RING_DIST, player.mo.scale)
 			local targetmobj = nil
 			local x1 = player.mo.x+maxdist
@@ -88,7 +93,7 @@ addHook("SpinSpecial",
 			if(not result) then
 				print("interrupted!")
 			end
-			*/
+			]]--
 		end)
 		
 addHook("JumpSpinSpecial",
